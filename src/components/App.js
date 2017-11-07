@@ -6,6 +6,7 @@ import Fish from './Fish';
 import Samples from '../sample-fishes';
 import firebase from 'firebase';
 import base from '../base';
+import PropTypes from 'prop-types'
 
 let config = {
     apiKey: "AIzaSyD0IeF2UHc6hskB7PKehVvE22_XF2sgl8g",
@@ -122,5 +123,8 @@ class App extends React.Component {
             </div>
         )
     }
+}
+App.propTypes = {
+    params: PropTypes.object.isRequired
 }
 export default App;
