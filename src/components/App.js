@@ -7,16 +7,6 @@ import Samples from '../sample-fishes';
 import firebase from 'firebase';
 import base from '../base';
 import PropTypes from 'prop-types'
-
-let config = {
-    apiKey: "AIzaSyD0IeF2UHc6hskB7PKehVvE22_XF2sgl8g",
-    authDomain: "catch-of-the-day-muganwa.firebaseapp.com",
-    databaseURL: "https://catch-of-the-day-muganwa.firebaseio.com",
-    projectId: "catch-of-the-day-muganwa",
-    storageBucket: "",
-    messagingSenderId: "62361177456"
-  };
-  firebase.initializeApp(config);
   
 class App extends React.Component {
     constructor () {

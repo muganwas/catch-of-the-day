@@ -1,12 +1,29 @@
 import React from 'react';
 import FishForm from './AddFishForm';
 import PropTypes from 'prop-types';
+import base from '../base';
 
 class Inventory extends React.Component {
     constructor (props) {
         super(props);
         this.renderInventory = this.renderInventory.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.renderLogin = this.renderLogin.bind(this);
+        this.authenticate = this.authenticate.bind(this);
+        this.authHandler = this.authHandler.bind(this);
+        this.state = {
+            uid: null,
+            owner: null
+        }
+    }
+
+    authenticate(provider) {
+        console.log(`Trying to login with ${provider}`);
+        base.authWithOAuthPopup(provider, this.authHandler);
+    }
+
+    authHandler (err, authData) {
+        console.log(authData);
     }
 
     handleChange (e, key) {
@@ -15,6 +32,18 @@ class Inventory extends React.Component {
             [e.target.name]: e.target.value
         };
         this.props.updateFish(key, updatedFish)   
+    }
+
+    renderLogin () {
+        return (
+            <nav className="login">
+                <h2>Inventory</h2>
+                <p>Sign in to manage your store inventory</p>
+                <button className="facebook" onClick={()=>this.authenticate('facebook')}>Login with Facebook</button>
+                <button className="google" onClick={()=>this.authenticate('google')}>Login with Google</button>
+                <button className="github" onClick={()=>this.authenticate('github')}>Login with Github</button>
+            </nav>
+        )
     }
 
     renderInventory (key) {
@@ -35,9 +64,24 @@ class Inventory extends React.Component {
         )
     }
     render () {
+        const logout = <div><button>Log out</button></div>
+        //check if someone is not logged in
+        if(!this.state.uid){
+            return <div>{this.renderLogin()}</div>
+        }
+        //if not the owner of the store
+        if(this.state.uid !== this.state.owner){
+            return (
+                <div>
+                    {logout}
+                    <p>Sorry you are not the owner of this store!</p>
+                </div>
+            )
+        }
         return (
             <div>
                 <h1>Inventory</h1>
+                {logout}
                 {Object.keys(this.props.fishes).map(this.renderInventory)}
                 <FishForm newFish={this.props.addFish} />
                 <button onClick={this.props.loadSamples}>Load Sample Fishes</button>
