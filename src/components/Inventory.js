@@ -11,19 +11,57 @@ class Inventory extends React.Component {
         this.renderLogin = this.renderLogin.bind(this);
         this.authenticate = this.authenticate.bind(this);
         this.authHandler = this.authHandler.bind(this);
+        this.logout = this.logout.bind(this);
         this.state = {
             uid: null,
             owner: null
         }
     }
 
+    componentDidMount() {
+        base.onAuth((user)=> {
+            if(user){
+                this.authHandler(null, {user});
+            }
+        });
+    }
+    
+    logout () {
+        base.unauth();
+        this.setState({
+            uid: null
+        })
+    }
+
     authenticate(provider) {
-        console.log(`Trying to login with ${provider}`);
         base.authWithOAuthPopup(provider, this.authHandler);
     }
 
     authHandler (err, authData) {
-        console.log(authData);
+        if(err) {
+            console.error(err);
+            return;
+        }
+        //get the store id
+        const storeRef = base.database().ref(this.props.storeId);
+        //query datase once for store data
+        storeRef.once('value', (snapshot)=> {
+            const data = snapshot.val() || {};
+            //get the uid from the authData
+            const uid = authData.user.uid;
+            //check if store has an owner
+            if(!data.owner) {
+                //console.log(user);
+                storeRef.set({
+                    owner: uid
+                });
+            }
+            this.setState({
+                uid: uid,
+                owner: data.owner || uid
+            });
+            
+        });
     }
 
     handleChange (e, key) {
@@ -64,7 +102,7 @@ class Inventory extends React.Component {
         )
     }
     render () {
-        const logout = <div><button>Log out</button></div>
+        const logout = <div><button onClick={()=> {this.logout()}}>Log out</button></div>
         //check if someone is not logged in
         if(!this.state.uid){
             return <div>{this.renderLogin()}</div>
@@ -95,7 +133,8 @@ Inventory.propTypes = {
     updateFish: PropTypes.func.isRequired,
     addFish: PropTypes.func.isRequired,
     loadSamples: PropTypes.func.isRequired,
-    fishes: PropTypes.object.isRequired
+    fishes: PropTypes.object.isRequired,
+    storeId: PropTypes.string.isRequired
 }
 
 export default Inventory;
