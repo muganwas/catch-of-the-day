@@ -1,0 +1,8 @@
+RewriteEngine on
+Options +MultiViews
+Options +Indexes
+
+RewriteBase /testingCode/catch-of-the-day/build/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ http://localhost:8080/testingCode/catch-of-the-day/build/index.html [L]

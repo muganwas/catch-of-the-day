@@ -9,7 +9,7 @@ import NotFound from './components/NotFound';
 var mPoint = document.getElementById('main');
 var Root = () => {
         return ( 
-        <BrowserRouter basename="/catch-of-the-day" >
+        <BrowserRouter basename="/testingCode/catch-of-the-day/build" >
             <div>
             <Match exactly pattern="/"component={ StorePicker }/>
             <Match pattern="/store/:storeId" component={ App }/>  
